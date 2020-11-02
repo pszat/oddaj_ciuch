@@ -1,0 +1,8 @@
+.idea
+.vscode
+node_modules
+package-lock.json
+project
+.env
+oddam_w_dobre_rece.code-workspace
+venv
