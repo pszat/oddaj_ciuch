@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
        */
       this.$el.addEventListener("click", e => {
         if (e.target.classList.contains("btn") && e.target.parentElement.parentElement.classList.contains("help--slides-pagination")) {
+          console.log(e)
           this.changePage(e);
         }
       });
@@ -61,9 +62,14 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     changePage(e) {
       e.preventDefault();
+      var id = e.target.dataset.id;
+      // console.log(id)
+      $.get(e.target.href, function (data) {
+        // console.log($('#help--slides_' + id))
+        // console.log($(data).find('#help--slides_' + id).html())
+        $('#help--slides_' + id).html($(data).find('#help--slides_' + id).html())
+      });
       const page = e.target.dataset.page;
-
-      console.log(page);
     }
   }
   const helpSection = document.querySelector(".help");

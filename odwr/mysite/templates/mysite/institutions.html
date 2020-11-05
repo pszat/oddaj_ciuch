@@ -1,0 +1,35 @@
+<ul class="help--slides-items" >
+    {% for i in institutions %}
+    <li>
+        <div class="col">
+            <div class="title">{{ i.name}}</div>
+            <div class="subtitle">Cel i misja: {{ i.description }}</div>
+        </div>
+
+        <div class="col">
+            <div class="text">
+                {% for cat in i.categories.all %}
+                {{ cat.name }},
+                {% endfor %}
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<!-- Pagination -->
+<ul class="help--slides-pagination">
+    {% for n in institutions.paginator.page_range %}
+    {% if institutions.number == n %}
+    <li>
+        <a href="{% url 'landing-page' %}?page{{ type }}={{ institutions.number}}"
+            class="btn btn--small btn--without-border active" data-page="{{ institutions.number}}"
+            data-id="{{ type }}">{{ institutions.number }} </a>
+    </li>
+    {% elif n > institutions.number|add:'-3' and n < institutions.number|add:'3' %}
+    <li>
+        <a href="{% url 'landing-page' %}?page{{ type }}={{ n }}" class="btn btn--small btn--without-border"
+            data-page="{{ n }}" data-id="{{ type }}">{{ n }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
