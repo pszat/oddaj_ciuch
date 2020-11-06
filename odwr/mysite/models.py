@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Category(models.Model):
     def __str__(self):
         return self.name
@@ -37,17 +38,3 @@ class Donation(models.Model):
     pick_up_time = models.TimeField(auto_now=False, auto_now_add=False, verbose_name="Czas odbioru", null=True)
     pick_up_comment = models.TextField(verbose_name="Komentarz do odbioru", null=True)
     user = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING, verbose_name="Użytkownik")
-
-"""
-quantity (liczba worków)
-- categories (relacja ManyToMany do modelu Category)
-- institution (klucz obcy do modelu Institution)
-- address (ulica plus numer domu)
-- phone_number (numer telefonu)
-- city
-- zip_code
-- pick_up_date
-- pick_up_time
-- pick_up_comment  
- - user (klucz obcy do tabeli user; domyślna tabela zakładana przez django; może być Nullem, domyślnie Null).
- """
