@@ -4,9 +4,8 @@ from django.db.models import Sum, Count
 from mysite import models
 from mysite import forms
 from django.core.paginator import Paginator
-from django.contrib.auth.models import User
-
-# Create your views here.
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 
 class LandingPage(views.View):
@@ -49,14 +48,45 @@ class Register(views.View):
             user.first_name = form.cleaned_data.get('first_name')
             user.last_name = form.cleaned_data.get('last_name')
             user.set_password(form.cleaned_data.get('password'))
-            return redirect(revers('login'))
-
+            
+            user.save()
+            messages.add_message(request, messages.INFO, 'Pomyślnie dodano nowego użytkownika')
+            return redirect(reverse('login'))
+        else:
+            return render(request, "mysite/register.html", ctx)
 
 class Login(views.View):
     def get(self, request):
         return render(request, "mysite/login.html")
 
+    def post(self, request):
+        email = request.POST.get('email')
+        password=request.POST.get('password')
+        user = authenticate(username=email, password=password)
+        if user is not None:
+            # A backend authenticated the credentials
+            login(request, user)
+            return redirect(reverse('landing-page'))
+        else:
+            # No backend authenticated the credentials
+            if models.User.objects.filter(username=email).count() == 0:
+                messages.add_message(request, messages.WARNING, 'Taki użytkownik nie istnieje')
+                return redirect(reverse('register'))
+            else:
+                messages.add_message(request, messages.WARNING, 'Złe hasło')
+                return render(request, "mysite/login.html", {'email':email})
+                
+
+
+class Logout(views.View):
+    def get(self, request):
+        logout(request)
+        return redirect(reverse('landing-page'))
+
 
 class AddDonation(views.View):
     def get(self, request):
-        return render(request, "mysite/add-donation.html")
+        if request.user.is_authenticated:
+            return render(request, "mysite/add-donation.html", {'user':request.user})
+        else:
+            return render(request, "mysite/add-donation.html")

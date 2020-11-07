@@ -1,7 +1,7 @@
 from mysite import models
 from django import forms
 from django.core.validators import ValidationError
-
+from django.contrib.auth import password_validation
 
 class RegistrationForm(forms.ModelForm):
 
@@ -20,8 +20,12 @@ class RegistrationForm(forms.ModelForm):
         }
 
     def clean(self):
-        cleaned_data = super(self).clean()
-        password = cleaned_data.get("password")
-        check_password = cleaned_data.get("check_password")
+        # cleaned_data = super(RegistrationForm).clean()
+        password = self.cleaned_data.get("password")
+        check_password = self.cleaned_data.get("check_password")
+        username = self.cleaned_data.get('email')
         if password != check_password:
             raise ValidationError("Oba hasła muszę być identyczne")
+        if models.User.objects.filter(username=username).count() > 0:
+            raise ValidationError("Użytkownik z podanym adresem email już istnieje")
+        password_validation.validate_password(password)

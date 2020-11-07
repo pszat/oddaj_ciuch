@@ -6,14 +6,9 @@
 
 {% block content %}
 <header class="header--main-page">
-  <nav class="container container--70">
-    <ul class="nav--actions">
-      <li><a href="{% url 'login' %}" class="btn btn--small btn--without-border">Zaloguj</a></li>
-      <li><a href="{% url 'register' %}" class="btn btn--small btn--highlighted">Załóż konto</a></li>
-    </ul>
 
-    {% include "mysite/navigation.html" %}
-  </nav>
+  {% include "mysite/navigation.html" %}
+
   <div class="slogan container container--90">
     <div class="slogan--item">
       <h1>
@@ -116,7 +111,7 @@
       ne, ea his reque quaeque recteque, ne quo lobortis intellegam.</p>
     {% include "mysite/institutions.html" with type=3 %}
 
-    
+
   </div>
 </section>
 {% endblock %}
