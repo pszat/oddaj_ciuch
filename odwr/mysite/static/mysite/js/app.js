@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   /**
    * HomePage - Help section
    */
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
         el.classList.remove("active");
 
         if (el.dataset.id === this.currentSlide) {
-          el.classList.add("active");
+          el.classList.add("active"); ``
         }
       });
     }
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
   /**
    * Hide elements when clicked on document
    */
-  document.addEventListener("click", function(e) {
+  document.addEventListener("click", function (e) {
     const target = e.target;
     const tagName = target.tagName;
 
@@ -177,6 +177,7 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$next = form.querySelectorAll(".next-step");
       this.$prev = form.querySelectorAll(".prev-step");
       this.$step = form.querySelector(".form--steps-counter span");
+      this.$categories = []
       this.currentStep = 1;
 
       this.$stepInstructions = form.querySelectorAll(".form--steps-instructions p");
@@ -203,6 +204,12 @@ document.addEventListener("DOMContentLoaded", function() {
         btn.addEventListener("click", e => {
           e.preventDefault();
           this.currentStep++;
+          
+          // after step 1 get all institutions based on selected ategories
+          if (this.currentStep === 2) {
+            this.getInstitutions();
+          }
+
           this.updateForm();
         });
       });
@@ -218,6 +225,36 @@ document.addEventListener("DOMContentLoaded", function() {
 
       // Form submit
       this.$form.querySelector("form").addEventListener("submit", e => this.submit(e));
+    }
+
+    getInstitutions() {
+      this.$categories = $("input:checked")
+      var categories = [];
+
+      this.$categories.each(function () {
+        categories.push(this.dataset.cat)
+      });
+
+      var address = "/rest/get_institutions/";
+      var params = {};
+      params.categories = categories;
+      $.getJSON(address, $.param(params, true), function (data, status) {
+        console.log(data);
+        $.each(data, function (key, val) {
+          var $div = $("<div>", { "class": "form-group form-group--checkbox" });
+          var $label = $("<label>");
+          $div.append($label);
+          var $input = $("<input>", { "type": "radio", "name": "organization", "value": "old" });
+          $label.append($input);
+          $label.append($("<span>", { "class": "checkbox radio" }));
+          var $span = $("<span>", { "class": "description" });
+          $label.append($span);
+          $span.append($("<div>", { "class": "title" }).html(val.name));
+          $span.append($("<div>", { "class": "subtitle" }).html(val.description));
+          $span.append($(document.createElement("div")));
+          $("#step_3").append($div);
+        });
+      });
     }
 
     /**
@@ -254,6 +291,8 @@ document.addEventListener("DOMContentLoaded", function() {
       this.updateForm();
     }
   }
+
+
   const form = document.querySelector(".form--steps");
   if (form !== null) {
     new FormSteps(form);

@@ -6,7 +6,7 @@ from mysite import forms
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
+from django.http import JsonResponse
 
 class LandingPage(views.View):
     def get(self, request):
@@ -74,8 +74,7 @@ class Login(views.View):
                 return redirect(reverse('register'))
             else:
                 messages.add_message(request, messages.WARNING, 'Złe hasło')
-                return render(request, "mysite/login.html", {'email':email})
-                
+                return render(request, "mysite/login.html", {'email':email})                
 
 
 class Logout(views.View):
@@ -86,7 +85,22 @@ class Logout(views.View):
 
 class AddDonation(views.View):
     def get(self, request):
-        if request.user.is_authenticated:
-            return render(request, "mysite/add-donation.html", {'user':request.user})
-        else:
-            return render(request, "mysite/add-donation.html")
+        categories = models.Category.objects.all()
+        ctx = {
+            'categories': categories
+        }
+        return render(request, "mysite/add-donation.html", ctx)
+
+
+def get_institutions_by_categories(request):
+    categories = request.GET.get('categories')
+    print('dupa')
+    # print(request.GET)
+    print(categories)
+    if categories is None:
+        institutions = models.Institution.objects.all().values()
+    else:
+        institutions = models.Institution.objects.filter(categories__in=categories).distinct().values()
+
+    institutions_list = list(institutions)
+    return JsonResponse(institutions_list, safe=False)
