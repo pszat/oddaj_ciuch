@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     changePage(e) {
       e.preventDefault();
-      var id = e.target.dataset.id;
+      let id = e.target.dataset.id;
       // console.log(id)
       $.get(e.target.href, function (data) {
         // console.log($('#help--slides_' + id))
@@ -172,12 +172,24 @@ document.addEventListener("DOMContentLoaded", function () {
    * Switching between form steps
    */
   class FormSteps {
+
     constructor(form) {
       this.$form = form;
       this.$next = form.querySelectorAll(".next-step");
       this.$prev = form.querySelectorAll(".prev-step");
       this.$step = form.querySelector(".form--steps-counter span");
+      this.$categories = $("input.categories")
       this.currentStep = 1;
+      this.categories = new Array();
+      this.address;
+      this.city;
+      this.postcode;
+      this.phone;
+      this.date;
+      this.time;
+      this.more_info;
+      this.bags;
+      this.fundation;
       this.$stepInstructions = form.querySelectorAll(".form--steps-instructions p");
       const $stepForms = form.querySelectorAll("form > div");
       this.slides = [...this.$stepInstructions, ...$stepForms];
@@ -201,7 +213,6 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.addEventListener("click", e => {
           e.preventDefault();
           this.currentStep++;
-          console.log(this.currentStep)
           this.updateForm();
         });
       });
@@ -220,38 +231,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     getInputValue(name) {
-      var $div = $("form")
+      let $div = $("form")
       return $div.find('[name="' + name + '"]').val();
-    }
-
-    getInstitutions() {
-      this.$categories = $("input:checked")
-      var categories = new Array();
-      this.$categories.each(function () {
-        categories.push(this.dataset.cat)
-      });
-      $("#step_3").html("")
-      var address = "/rest/get_institutions/";
-      var params = {};
-      params.categories = categories;
-      $.getJSON(address, $.param(params, true), function (data, status) {
-        console.log(data);
-        $.each(data, function (key, val) {
-          var $div = $("<div>", { "class": "form-group form-group--checkbox" });
-          var $label = $("<label>");
-          $div.append($label);
-          var $input = $("<input>", { "type": "radio", "name": "organization", "value": val.name });
-          $label.append($input);
-          $label.append($("<span>", { "class": "checkbox radio" }));
-          var $span = $("<span>", { "class": "description" });
-          $label.append($span);
-          $span.append($("<div>", { "class": "title" }).html(val.name));
-          $span.append($("<div>", { "class": "subtitle" }).html(val.description));
-          $span.append($(document.createElement("div")));
-          $("#step_3").append($div);
-        });
-      });
-      return categories;
     }
 
     /**
@@ -260,16 +241,8 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     updateForm() {
       this.$step.innerText = this.currentStep;
-      var categories = new Array();
-      var address;
-      var city;
-      var postcode;
-      var phone;
-      var date;
-      var time;
-      var more_info;
-      var bags;
-      var fundation;
+      //let address;
+
       // TODO: Validation
 
       this.slides.forEach(slide => {
@@ -280,51 +253,80 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       // after step 1 get all institutions based on selected ategories
+      if (this.currentStep === 2) {
+        let temp = new Array();
+        $("input:checked").each(function () {
+          temp.push(this.dataset.cat)
+        });
+        this.categories = temp;
+      }
       if (this.currentStep === 3) {
-        categories = this.getInstitutions();
+        $("#step_3").empty();
+        let address = "/rest/get_institutions/";
+        let params = {};
+        params.categories = this.categories;
+        $.getJSON(address, $.param(params, true), function (data, status) {
+          $.each(data, function (key, val) {
+            let $div = $("<div>", { "class": "form-group form-group--checkbox" });
+            let $label = $("<label>");
+            $div.append($label);
+            let $input = $("<input>", { "type": "radio", "name": "organization", "value": val.name });
+            $label.append($input);
+            $label.append($("<span>", { "class": "checkbox radio" }));
+            let $span = $("<span>", { "class": "description" });
+            $label.append($span);
+            $span.append($("<div>", { "class": "title" }).html(val.name));
+            $span.append($("<div>", { "class": "subtitle" }).html(val.description));
+            $span.append($(document.createElement("div")));
+            $("#step_3").append($div);
+          });
+        });
       }
       if (this.currentStep === 5) {
-        address = this.getInputValue('address');
-        city = this.getInputValue('city');
-        postcode = this.getInputValue('postcode');
-        phone = this.getInputValue('phone');
-        date = this.getInputValue('date');
-        time = this.getInputValue('time');
-        more_info = this.getInputValue('more_info');
-        bags = this.getInputValue('bags');
-        fundation = $('input[name=organization]:checked', this.$form).val()
-        
+        this.address = this.getInputValue('address');
+        this.city = this.getInputValue('city');
+        this.postcode = this.getInputValue('postcode');
+        this.phone = this.getInputValue('phone');
+        this.date = this.getInputValue('date');
+        this.time = this.getInputValue('time');
+        this.more_info = this.getInputValue('more_info');
+        this.bags = this.getInputValue('bags');
+        this.fundation = $('input[name=organization]:checked', this.$form).val()
+        let categories = "";
+        $("input.categories:checked").each(function () {
+          categories = categories + (this.dataset.name);
+        })
+
         // clear div
-        var $div = $("#step_5_you_give").html("")
+        let $div_1 = $("#step_5_you_give").empty()
         //add list and items
-        var $ul = $("<ul>")
-        $div.append($ul)
+        let $ul_1 = $("<ul>")
+        $div_1.append($ul_1)
 
-        var $li =$("<li>")
-        $ul.append($li)
-        $li.append($("<span>", {"class": "icon icon-bag"}))
-        $li.append($("<span>", {"class": "summary--text"})).html(bags + " worki " + categories.toString())
+        let $li_1 = $("<li>")
+        $ul_1.append($li_1)
+        $li_1.append($("<span>", { "class": "icon icon-bag" }))
+        $li_1.append($("<span>", { "class": "summary--text" })).html(this.bags + " worki " + categories);
 
+        let $li_2 = $("<li>")
+        $ul_1.append($li_2)
+        $li_2.append($("<span>", { "class": "icon icon-hand" }))
+        $li_2.append($("<span>", { "class": "summary--text" })).html('Dla fundacji "' + this.fundation + '"')
 
-        var $li =$("<li>")
-        $ul.append($li)
-        $li.append($("<span>", {"class": "icon icon-hand"}))
-        $li.append($("<span>", {"class": "summary--text"})).html('Dla fundacji "' + fundation +'"')
+        let $div_2 = $("#step_5_address").empty()
+        let $ul_2 = $("<ul>")
+        $div_2.append($ul_2)
+        $ul_2.append($("<li>").html(this.address))
+        $ul_2.append($("<li>").html(this.city))
+        $ul_2.append($("<li>").html(this.postcode))
+        $ul_2.append($("<li>").html(this.phone))
 
-        var $div = $("#step_5_address").html("")
-        var $ul = $("<ul>")
-        $div.append($ul)
-        $ul.append($("<li>").html(address))
-        $ul.append($("<li>").html(city))
-        $ul.append($("<li>").html(postcode))
-        $ul.append($("<li>").html(phone))
-
-        var $div = $("#step_5_date_time").html("")
-        var $ul = $("<ul>")
-        $div.append($ul)
-        $ul.append($("<li>").html(date))
-        $ul.append($("<li>").html(time))
-        $ul.append($("<li>").html(more_info))
+        let $div_3 = $("#step_5_date_time").empty()
+        let $ul_3 = $("<ul>")
+        $div_3.append($ul_3)
+        $ul_3.append($("<li>").html(this.date))
+        $ul_3.append($("<li>").html(this.time))
+        $ul_3.append($("<li>").html(this.more_info))
       }
 
       this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 6;
@@ -335,16 +337,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /**
      * Submit form
-     *
+     *g, let the event go
      * TODO: validation, send data to server
      */
+    validate() {
+      if (this.categories.length === 0) {
+        // category wasn't selected redirect to step 1
+        this.currentStep = 1;
+        let $div = $("#step_1_form_error").html("");
+        $div.append($("<h3>").html("Muisz wybrać przynajmniej jedą kategorię darów."));
+        return false;
+      }
+      else if (this.bags === "") {
+        this.currentStep = 2;
+        let $div = $("#step_2_form_error").html("");
+        $div.append($("<h3>").html("Muisz podać ilość worków."));
+        return false;
+      }
+      else if (!this.fundation) {
+        this.currentStep = 3;
+        let $div = $("#step_3_form_error").html("");
+        $div.append($("<h3>").html("Muisz wybrać fundację."));
+        return false;
+      }
+      else if (this.address === "" || this.date === "" || this.time === "") {
+        this.currentStep = 4;
+        let $div = $("#step_4_form_error").html("");
+        $div.append($("<h3>").html("Muisz podać adres i czas odbioru paczki."));
+        return false;
+      }
+      else return true;
+
+    }
+
     submit(e) {
-      e.preventDefault();
-      this.currentStep++;
-      this.updateForm();
+      if (this.validate()) {
+        this.currentStep++;
+        return;
+      }
+      else {
+        e.preventDefault();
+        this.updateForm();
+      }
+
     }
   }
-
 
   const form = document.querySelector(".form--steps");
   if (form !== null) {

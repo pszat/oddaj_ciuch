@@ -85,11 +85,16 @@ class Logout(views.View):
 
 class AddDonation(views.View):
     def get(self, request):
-        categories = models.Category.objects.all()
+        institutions = models.Institution.objects.all()
+        categories = models.Category.objects.filter(institution__in=institutions).distinct()
         ctx = {
             'categories': categories
         }
         return render(request, "mysite/add-donation.html", ctx)
+        
+    def post(self, request):
+        print("yeey")
+        return redirect(reverse('landing-page'))
 
 
 def get_institutions_by_categories(request):
@@ -98,7 +103,7 @@ def get_institutions_by_categories(request):
     # print(request.GET)
     print(categories)
     if categories is None:
-        institutions = models.Institution.objects.all().values()
+        institutions = models.Institution.objects.get(id=0).values()
     else:
         institutions = models.Institution.objects.filter(categories__in=categories).distinct().values()
 

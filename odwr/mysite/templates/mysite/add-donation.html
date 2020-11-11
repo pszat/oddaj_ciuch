@@ -60,15 +60,21 @@
   <div class="form--steps-container">
     <div class="form--steps-counter">Krok <span>1</span>/5</div>
 
-    <form action="form-confirmation.html" method="post">
+    <form  method="post">
+      {% csrf_token %}
+      <div id="form-error" style="color: crimson; font-weight: bold; font-size: large;">
+      </div>
       <!-- STEP 1: class .active is switching steps -->
       <div data-step="1" class="active">
+        <div id="step_1_form_error" style="color: crimson; font-weight: bold; font-size: large;">
+        </div>
         <h3>Zaznacz co chcesz oddać:</h3>
         {% if categories %}
         {% for cat in categories%}
         <div class="form-group form-group--checkbox">
           <label>
-            <input type="checkbox" name="categories" class="categories" data-cat="{{ cat.id }}" />
+            <input type="checkbox" name="categories" class="categories" data-name="{{ cat.name }}"
+              data-cat="{{ cat.id }}" />
             <span class="checkbox"></span>
             <span class="description">{{ cat.name }}</span>
           </label>
@@ -83,6 +89,8 @@
 
       <!-- STEP 2 -->
       <div data-step="2">
+        <div id="step_2_form_error" style="color: crimson; font-weight: bold; font-size: large;">
+        </div>
         <h3>Podaj liczbę 60l worków, w które spakowałeś/aś rzeczy:</h3>
 
         <div class="form-group form-group--inline">
@@ -103,6 +111,8 @@
       <!-- STEP 3 -->
       <div data-step="3">
         <h3>Wybierz organizacje, której chcesz pomóc:</h3>
+        <div id="step_3_form_error" style="color: crimson; font-weight: bold; font-size: large;">
+        </div>
         <div id="step_3"></div>
 
         <div class="form-group form-group--buttons">
@@ -113,8 +123,9 @@
 
       <!-- STEP 4 -->
       <div data-step="4" id="step_4">
-        <h3>Podaj adres oraz termin odbioru rzecz przez kuriera:</h3>
-
+        <h3>Podaj adres oraz termin odbioru rzeczy przez kuriera:</h3>
+        <div id="step_4_form_error" style="color: crimson; font-weight: bold; font-size: large;">
+        </div>
         <div class="form-section form-section--columns">
           <div class="form-section--column">
             <h4>Adres odbioru</h4>
@@ -177,13 +188,13 @@
             <div class="form-section--column">
               <h4>Adres odbioru:</h4>
               <div id="step_5_address"></div>
-              
+
             </div>
 
             <div class="form-section--column">
               <h4>Termin odbioru:</h4>
               <div id="step_5_date_time"></div>
-              
+
             </div>
           </div>
         </div>
