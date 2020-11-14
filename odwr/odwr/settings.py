@@ -51,6 +51,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SESSION_COOKIE = 1
+
 ROOT_URLCONF = 'odwr.urls'
 
 TEMPLATES = [

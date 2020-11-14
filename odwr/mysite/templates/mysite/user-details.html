@@ -1,0 +1,41 @@
+{% extends "mysite/base.html" %}
+{% block title %}{% endblock %}
+
+{% block content %}
+<header>
+
+  {% include "mysite/navigation.html" %}
+</header>
+<section class="help">
+  <div class="help--slides active">
+    <ul class="help--slides-items">
+      <li>
+        <div class="col">
+          <div class="title">{{ user.first_name }}</div>
+          <div class="title">{{ user.last_name }}</div>
+          <div class="title">{{ user.email }}</div>
+        </div>
+      </li>
+      <h2>Lista przekazanych darów</h2>
+      {% for d in donations %}
+      <li>
+        <div class="col">
+          <div class="title">{{ d.institution.name }}</div>
+          <div class="text">
+            {% for cat in d.categories.all %}
+            {{ cat.name }},
+            {% endfor %}
+          </div>
+        </div>
+        <div class="col">
+          <div class="title">{{ d.quantity }} worki</div>
+          <div class="text">
+            <p>przekazano dnia {{ d.pick_up_date }} o godzinie {{ d.pick_up_time }}</p>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}

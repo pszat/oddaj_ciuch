@@ -17,12 +17,15 @@ class Institution(models.Model):
     )
 
     def __str__(self):
-        return f"{self.name}"
+        cat = self.categories.all()
+        return f'Nazwa: {self.name}, typ: {self.get_institutionType_display()}, kategorie:" {(", ").join([c.name for c in cat])}'
+
+        
     
     
     name = models.CharField(max_length=128,  null=False, verbose_name="Nazwa")
-    description= models.TextField(verbose_name="Opis", null=True)
-    type = models.IntegerField(choices=TYPES, default=0, verbose_name="Typ")
+    description= models.TextField(verbose_name="Opis", null=True, blank=True)
+    institutionType = models.IntegerField(choices=TYPES, default=0, verbose_name="Typ")
     categories = models.ManyToManyField(Category, verbose_name="Kategorie")
 
 
@@ -37,4 +40,4 @@ class Donation(models.Model):
     pick_up_date = models.DateField(auto_now=False, auto_now_add=False, verbose_name="Data odbioru", null=True)
     pick_up_time = models.TimeField(auto_now=False, auto_now_add=False, verbose_name="Czas odbioru", null=True)
     pick_up_comment = models.TextField(verbose_name="Komentarz do odbioru", null=True)
-    user = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING, verbose_name="Użytkownik")
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name="Użytkownik")

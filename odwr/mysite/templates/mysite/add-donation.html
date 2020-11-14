@@ -73,7 +73,7 @@
         {% for cat in categories%}
         <div class="form-group form-group--checkbox">
           <label>
-            <input type="checkbox" name="categories" class="categories" data-name="{{ cat.name }}"
+            <input type="checkbox" name="categories" class="categories" value="{{ cat.id }}" data-name="{{ cat.name }}"
               data-cat="{{ cat.id }}" />
             <span class="checkbox"></span>
             <span class="description">{{ cat.name }}</span>

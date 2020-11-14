@@ -11,17 +11,7 @@
   <h2>Załóż konto</h2>
   <form method="POST">
     {% csrf_token %}
-    {% if messages %}
-    <div class="messages">
-      {% for message in messages %}
-      <h3 {% if message.tags %} class="{{ message.tags }}" {% endif %}
-        style="color: crimson; font-weight: bold; font-size: large;">
-        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-        {{ message }}
-      </h3>
-      {% endfor %}
-    </div>
-    {% endif %}
+    
 
 
     {% if form.non_field_errors %}

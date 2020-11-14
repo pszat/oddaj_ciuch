@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let $div = $("<div>", { "class": "form-group form-group--checkbox" });
             let $label = $("<label>");
             $div.append($label);
-            let $input = $("<input>", { "type": "radio", "name": "organization", "value": val.name });
+            let $input = $("<input>", { "type": "radio", "name": "organization", "value": val.id, "data-name": val.name });
             $label.append($input);
             $label.append($("<span>", { "class": "checkbox radio" }));
             let $span = $("<span>", { "class": "description" });
@@ -291,7 +291,7 @@ document.addEventListener("DOMContentLoaded", function () {
         this.time = this.getInputValue('time');
         this.more_info = this.getInputValue('more_info');
         this.bags = this.getInputValue('bags');
-        this.fundation = $('input[name=organization]:checked', this.$form).val()
+        this.fundation = $('input[name=organization]:checked', this.$form).data("name");
         let categories = "";
         $("input.categories:checked").each(function () {
           categories = categories + (this.dataset.name);

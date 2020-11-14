@@ -16,8 +16,18 @@
 </head>
 
 <body>
- 
 
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+    <h3 {% if message.tags %} class="{{ message.tags }}" {% endif %}
+      style="color: crimson; font-weight: bold; font-size: large; text-align: center;">
+      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+      {{ message }}
+    </h3>
+    {% endfor %}
+  </div>
+  {% endif %}
 
   {% block content %}
 
